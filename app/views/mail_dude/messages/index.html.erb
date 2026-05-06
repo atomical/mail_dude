@@ -1,0 +1,15 @@
+<header class="mail-dude-header">
+  <h1>MailDude</h1>
+  <%= form_with url: messages_path, method: :get, local: true, class: "mail-dude-search" do |form| %>
+    <%= form.label :q, "Search messages" %>
+    <%= form.search_field :q, value: @query, placeholder: "Search..." %>
+    <%= form.submit "Search" %>
+  <% end %>
+  <%= button_to "Clear All", clear_messages_path, method: :delete, class: "mail-dude-danger" %>
+</header>
+
+<section class="mail-dude-layout">
+  <%= render "list", page: @page, selected_message: @selected_message, query: @query %>
+  <%= render "message_pane", message: @selected_message %>
+</section>
+

@@ -1,0 +1,103 @@
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+  Exclude:
+    - "bin/**/*"
+    - "spec/dummy/bin/**/*"
+    - "spec/tmp/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
+  SuggestExtensions: false
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "*.gemspec"
+    - "lib/tasks/**/*.rake"
+
+Metrics/AbcSize:
+  Exclude:
+    - "db/migrate/**/*"
+    - "lib/mail_dude/message_serializer.rb"
+    - "lib/mail_dude/stores/database_store.rb"
+    - "spec/rails_helper.rb"
+
+Metrics/MethodLength:
+  Exclude:
+    - "db/migrate/**/*"
+    - "lib/generators/mail_dude/install_generator.rb"
+    - "lib/mail_dude/configuration.rb"
+    - "lib/mail_dude/message_serializer.rb"
+    - "lib/mail_dude/stores/database_store.rb"
+    - "spec/rails_helper.rb"
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Lint/EmptyClass:
+  Exclude:
+    - "lib/mail_dude/dashboard.rb"
+
+Lint/MissingSuper:
+  Exclude:
+    - "lib/mail_dude/stores/file_store.rb"
+    - "lib/mail_dude/stores/memory_store.rb"
+
+Naming/PredicateMethod:
+  Exclude:
+    - "lib/mail_dude/message_broadcast.rb"
+    - "lib/mail_dude/stores/**/*.rb"
+
+Naming/PredicatePrefix:
+  Exclude:
+    - "lib/mail_dude/message_presenter.rb"
+
+Rails/HelperInstanceVariable:
+  Exclude:
+    - "app/helpers/mail_dude/application_helper.rb"
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Rails/Output:
+  Exclude:
+    - "lib/generators/mail_dude/install_generator.rb"
+    - "lib/tasks/**/*.rake"
+
+Rails/OutputSafety:
+  Exclude:
+    - "app/controllers/mail_dude/messages_controller.rb"
+
+Style/Documentation:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 40
+
+RSpec/MultipleExpectations:
+  Max: 15
+
+RSpec/NestedGroups:
+  Max: 5
+
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/tasks/**/*"
+
+RSpec/InstanceVariable:
+  Exclude:
+    - "spec/stores/shared_store_examples.rb"
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false

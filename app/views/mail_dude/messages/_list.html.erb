@@ -1,0 +1,37 @@
+<aside class="mail-dude-list" aria-label="Captured messages">
+  <% if page.records.empty? %>
+    <%= render "empty", message: query.present? ? "No messages match your search." : "No captured messages yet." %>
+  <% else %>
+    <ul>
+      <% page.records.each do |record| %>
+        <% presenter = MailDude::MessagePresenter.new(record) %>
+        <li>
+          <%= link_to message_path(record.id),
+                      class: "mail-dude-list-item #{'is-active' if mail_dude_selected?(record)}",
+                      aria: { current: (mail_dude_selected?(record) ? "true" : nil) } do %>
+            <strong><%= presenter.subject_label %></strong>
+            <span><%= presenter.sender_summary %></span>
+            <span><%= presenter.recipient_summary %></span>
+            <span><%= presenter.captured_at_label %></span>
+            <% if presenter.has_attachments? %>
+              <span><%= presenter.attachment_count_label %></span>
+            <% end %>
+            <% unless presenter.mailer_label == "(unknown mailer)" %>
+              <span><%= presenter.mailer_label %></span>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+    <nav class="mail-dude-pagination" aria-label="Pagination">
+      <% if page.previous_page %>
+        <%= link_to "Previous", messages_path(page: page.previous_page, q: query) %>
+      <% end %>
+      <span>Page <%= page.page %> of <%= page.total_pages %></span>
+      <% if page.next_page %>
+        <%= link_to "Next", messages_path(page: page.next_page, q: query) %>
+      <% end %>
+    </nav>
+  <% end %>
+</aside>
+

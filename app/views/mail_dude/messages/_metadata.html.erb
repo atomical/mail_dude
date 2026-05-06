@@ -1,0 +1,33 @@
+<dl class="mail-dude-metadata">
+  <dt>From</dt>
+  <dd><%= mail_dude_address_list(presenter.from) %></dd>
+  <% if presenter.sender.present? && presenter.sender != presenter.from %>
+    <dt>Sender</dt>
+    <dd><%= mail_dude_address_list(presenter.sender) %></dd>
+  <% end %>
+  <dt>To</dt>
+  <dd><%= mail_dude_address_list(presenter.to) %></dd>
+  <% if presenter.cc.present? %>
+    <dt>Cc</dt>
+    <dd><%= mail_dude_address_list(presenter.cc) %></dd>
+  <% end %>
+  <% if presenter.bcc.present? %>
+    <dt>Bcc</dt>
+    <dd><%= mail_dude_address_list(presenter.bcc) %></dd>
+  <% end %>
+  <% if presenter.reply_to.present? %>
+    <dt>Reply-To</dt>
+    <dd><%= mail_dude_address_list(presenter.reply_to) %></dd>
+  <% end %>
+  <dt>Captured</dt>
+  <dd><%= presenter.captured_at_label %></dd>
+  <dt>Message-ID</dt>
+  <dd><%= presenter.message_id.presence || "None" %></dd>
+  <dt>Content-Type</dt>
+  <dd><%= presenter.content_type.presence || "None" %></dd>
+  <dt>Mailer</dt>
+  <dd><%= presenter.mailer_label %></dd>
+  <dt>Size</dt>
+  <dd><%= presenter.size_label %></dd>
+</dl>
+

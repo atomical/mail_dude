@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MailDude</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <% if MailDude.configuration.live_updates %>
+      <meta name="action-cable-url" content="/cable">
+    <% end %>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag "mail_dude/application", media: "all" %>
+  </head>
+  <body class="mail-dude">
+    <main class="mail-dude-shell">
+      <% if notice.present? %>
+        <p class="mail-dude-notice"><%= notice %></p>
+      <% end %>
+      <% if MailDude.configuration.live_updates %>
+        <div class="mail-dude-live-banner" data-mail-dude-live-banner hidden aria-live="polite"></div>
+      <% end %>
+      <%= yield %>
+    </main>
+    <% if MailDude.configuration.live_updates %>
+      <script>
+        (function() {
+          var banner = document.querySelector("[data-mail-dude-live-banner]");
+          if (!banner || !window.WebSocket) return;
+
+          var meta = document.querySelector("meta[name='action-cable-url']");
+          var path = meta && meta.content ? meta.content : "/cable";
+          var protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+          var url = path.match(/^wss?:\/\//) ? path : protocol + window.location.host + path;
+          var socket = new WebSocket(url);
+          var identifier = JSON.stringify({ channel: "MailDude::MessagesChannel" });
+
+          socket.addEventListener("open", function() {
+            socket.send(JSON.stringify({ command: "subscribe", identifier: identifier }));
+          });
+
+          socket.addEventListener("message", function(event) {
+            var data = JSON.parse(event.data);
+            if (!data.message || data.message.event !== "message_created") return;
+
+            banner.hidden = false;
+            banner.textContent = "New message captured. ";
+            var link = document.createElement("a");
+            link.href = window.location.href;
+            link.textContent = "Refresh inbox.";
+            banner.appendChild(link);
+          });
+        }());
+      </script>
+    <% end %>
+  </body>
+</html>

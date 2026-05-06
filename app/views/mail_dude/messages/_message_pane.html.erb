@@ -1,0 +1,30 @@
+<section class="mail-dude-pane" aria-label="Selected message">
+  <% if message.nil? %>
+    <%= render "empty", message: "No message selected." %>
+  <% else %>
+    <% presenter = MailDude::MessagePresenter.new(message) %>
+    <header class="mail-dude-pane-header">
+      <h2><%= presenter.subject_label %></h2>
+      <%= button_to "Delete", message_path(presenter.id), method: :delete, class: "mail-dude-danger" %>
+    </header>
+    <%= render "metadata", presenter: presenter %>
+    <%= render "tabs", presenter: presenter %>
+    <% if presenter.has_attachments? %>
+      <section class="mail-dude-attachments">
+        <h3>Attachments</h3>
+        <% if MailDude.configuration.capture_attachments %>
+          <ul>
+            <% presenter.attachments.each do |attachment| %>
+              <li>
+                <%= link_to attachment["filename"], attachment_message_path(presenter.id, attachment["id"]) %>
+                <span><%= attachment["content_type"] %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>Attachments were present but capture is disabled.</p>
+        <% end %>
+      </section>
+    <% end %>
+  <% end %>
+</section>

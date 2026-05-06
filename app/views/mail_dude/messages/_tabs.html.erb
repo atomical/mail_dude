@@ -1,0 +1,14 @@
+<nav class="mail-dude-tabs" aria-label="Message body views">
+  <%= link_to "HTML", html_message_path(presenter.id), target: "mail-dude-html-frame" %>
+  <%= link_to "Text", text_message_path(presenter.id) %>
+  <%= link_to "Headers", headers_message_path(presenter.id) %>
+  <%= link_to "Raw", raw_message_path(presenter.id) %>
+</nav>
+
+<iframe
+  class="mail-dude-message-html-frame"
+  name="mail-dude-html-frame"
+  src="<%= html_message_path(presenter.id) %>"
+  sandbox=""
+  title="HTML email preview"></iframe>
+

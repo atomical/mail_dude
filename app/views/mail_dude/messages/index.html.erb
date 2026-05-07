@@ -1,5 +1,8 @@
 <header class="mail-dude-header">
-  <h1>MailDude</h1>
+  <div class="mail-dude-brand">
+    <%= image_tag "mail_dude/icon.png", alt: "", class: "mail-dude-logo" %>
+    <h1>MailDude</h1>
+  </div>
   <%= form_with url: messages_path, method: :get, local: true, class: "mail-dude-search" do |form| %>
     <%= form.label :q, "Search messages" %>
     <%= form.search_field :q, value: @query, placeholder: "Search..." %>
@@ -12,4 +15,3 @@
   <%= render "list", page: @page, selected_message: @selected_message, query: @query %>
   <%= render "message_pane", message: @selected_message %>
 </section>
-

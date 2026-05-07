@@ -25,6 +25,91 @@
           var banner = document.querySelector("[data-mail-dude-live-banner]");
           if (!banner || !window.WebSocket) return;
 
+          function parsedMessage(event) {
+            try {
+              var data = JSON.parse(event.data);
+              return data.message;
+            } catch (error) {
+              return null;
+            }
+          }
+
+          function appendText(element, tagName, text) {
+            if (!text) return;
+
+            var child = document.createElement(tagName);
+            child.textContent = text;
+            element.appendChild(child);
+          }
+
+          function messageExists(list, id) {
+            var items = list.querySelectorAll("[data-mail-dude-message-id]");
+
+            for (var index = 0; index < items.length; index += 1) {
+              if (items[index].getAttribute("data-mail-dude-message-id") === id) return true;
+            }
+
+            return false;
+          }
+
+          function trimList(list, perPage) {
+            if (!perPage) return;
+
+            while (list.children.length > perPage) {
+              list.removeChild(list.lastElementChild);
+            }
+          }
+
+          function prependMessage(message) {
+            var container = document.querySelector("[data-mail-dude-list-container]");
+            if (!container || container.getAttribute("data-mail-dude-live-list-enabled") !== "true") return false;
+
+            var list = container.querySelector("[data-mail-dude-message-list]");
+            var basePath = container.getAttribute("data-mail-dude-messages-path");
+            var id = String(message.id || "");
+            if (!list || !basePath || !id) return false;
+            if (messageExists(list, id)) return true;
+
+            var item = document.createElement("li");
+            item.setAttribute("data-mail-dude-message-id", id);
+
+            var link = document.createElement("a");
+            link.className = "mail-dude-list-item";
+            link.href = basePath.replace(/\/$/, "") + "/" + encodeURIComponent(id);
+            appendText(link, "strong", message.subject);
+            appendText(link, "span", message.sender);
+            appendText(link, "span", message.recipients);
+            appendText(link, "span", message.captured_at);
+            if (message.attachments_count > 0) appendText(link, "span", message.attachment_count_label);
+            if (message.mailer_label && message.mailer_label !== "(unknown mailer)") {
+              appendText(link, "span", message.mailer_label);
+            }
+
+            item.appendChild(link);
+            list.insertBefore(item, list.firstChild);
+            list.hidden = false;
+
+            var emptyState = container.querySelector("[data-mail-dude-empty-state]");
+            if (emptyState) emptyState.hidden = true;
+
+            var pagination = container.querySelector("[data-mail-dude-pagination]");
+            if (pagination) pagination.hidden = false;
+
+            trimList(list, parseInt(container.getAttribute("data-mail-dude-per-page"), 10));
+            return true;
+          }
+
+          function showBanner(message, inserted) {
+            banner.hidden = false;
+            banner.textContent = inserted ? "New message captured." : "New message captured. ";
+            if (inserted) return;
+
+            var link = document.createElement("a");
+            link.href = window.location.href;
+            link.textContent = "Refresh inbox.";
+            banner.appendChild(link);
+          }
+
           var meta = document.querySelector("meta[name='action-cable-url']");
           var path = meta && meta.content ? meta.content : "/cable";
           var protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
@@ -37,15 +122,10 @@
           });
 
           socket.addEventListener("message", function(event) {
-            var data = JSON.parse(event.data);
-            if (!data.message || data.message.event !== "message_created") return;
+            var message = parsedMessage(event);
+            if (!message || message.event !== "message_created") return;
 
-            banner.hidden = false;
-            banner.textContent = "New message captured. ";
-            var link = document.createElement("a");
-            link.href = window.location.href;
-            link.textContent = "Refresh inbox.";
-            banner.appendChild(link);
+            showBanner(message, prependMessage(message));
           });
         }());
       </script>

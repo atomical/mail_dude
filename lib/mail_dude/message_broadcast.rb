@@ -31,11 +31,19 @@ module MailDude
       {
         event: 'message_created',
         id: record.id,
+        **list_metadata(presenter)
+      }
+    end
+
+    def list_metadata(presenter)
+      {
         subject: presenter.subject_label,
         sender: presenter.sender_summary,
         recipients: presenter.recipient_summary,
         captured_at: presenter.captured_at_label,
-        attachments_count: presenter.attachments.length
+        attachments_count: presenter.attachments.length,
+        attachment_count_label: presenter.attachment_count_label,
+        mailer_label: presenter.mailer_label
       }
     end
   end

@@ -44,7 +44,9 @@ RSpec.describe MailDude::MessageBroadcast do
         subject: 'Attachment',
         sender: 'from@example.com',
         recipients: 'to@example.com',
-        attachments_count: 1
+        attachments_count: 1,
+        attachment_count_label: '1 attachment',
+        mailer_label: '(unknown mailer)'
       )
     )
     expect(captured_payload.to_s).not_to include('PDFDATA', 'Subject: Attachment')

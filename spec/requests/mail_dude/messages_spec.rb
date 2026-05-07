@@ -6,6 +6,8 @@ RSpec.describe 'MailDude messages', type: :request do
   it 'renders empty inbox and search empty state' do
     get '/mail_dude'
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include('class="mail-dude-logo"')
+    expect(response.body).to include('mail_dude/icon')
     expect(response.body).to include('No captured messages yet.')
     expect(response.body).not_to include('MailDude::MessagesChannel')
 
@@ -22,6 +24,8 @@ RSpec.describe 'MailDude messages', type: :request do
     get '/mail_dude'
 
     expect(response.body).to include('data-mail-dude-live-banner')
+    expect(response.body).to include('data-mail-dude-message-list')
+    expect(response.body).to include('data-mail-dude-live-list-enabled="true"')
     expect(response.body).to include('MailDude::MessagesChannel')
     expect(response.body).to include('action-cable-url')
   end
@@ -38,6 +42,7 @@ RSpec.describe 'MailDude messages', type: :request do
     expect(response.body).to include('sandbox=""')
     expect(response.body).not_to include('allow-scripts')
     expect(response.body).to include('Next').or include('Previous')
+    expect(response.body).to include('data-mail-dude-message-id')
     expect(response.body).to include(first.id).or include('Page 1 of 2')
   end
 

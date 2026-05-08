@@ -11,7 +11,7 @@ RSpec.describe MailDude::Engine.routes, type: :routing do
     expect(get: '/messages/abc').to route_to('mail_dude/messages#show', id: 'abc')
     expect(get: '/messages/abc/html').to route_to('mail_dude/messages#html', id: 'abc')
     expect(get: '/messages/abc/text').to route_to('mail_dude/messages#text', id: 'abc')
-    expect(get: '/messages/abc/headers').to route_to('mail_dude/messages#headers', id: 'abc')
+    expect(get: '/messages/abc/headers').to route_to('mail_dude/messages#message_headers', id: 'abc')
     expect(get: '/messages/abc/raw').to route_to('mail_dude/messages#raw', id: 'abc')
     expect(get: '/messages/abc/attachments/a0').to route_to(
       'mail_dude/attachments#show',

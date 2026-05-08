@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'boot'
+require 'logger'
 require 'rails/all'
 require_relative '../../../lib/mail_dude'
 
@@ -8,7 +9,7 @@ Bundler.require(*Rails.groups)
 
 module Dummy
   class Application < Rails::Application
-    config.load_defaults 7.2
+    config.load_defaults Rails::VERSION::STRING.to_f
     config.root = Pathname.new(File.expand_path('..', __dir__))
     config.eager_load = false
     config.secret_key_base = 'test-secret-key-base'

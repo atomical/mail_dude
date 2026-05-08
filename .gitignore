@@ -1,5 +1,6 @@
 /.bundle/
 /coverage/
+/gemfiles/*.lock
 /pkg/
 /*.gem
 /tmp/

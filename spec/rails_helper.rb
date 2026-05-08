@@ -110,7 +110,11 @@ end
 RSpec.configure do |config|
   config.include MailDudeSpecHelpers
   config.include ActiveSupport::Testing::TimeHelpers
-  config.fixture_paths = [File.expand_path('fixtures', __dir__)]
+  if config.respond_to?(:fixture_paths=)
+    config.fixture_paths = [File.expand_path('fixtures', __dir__)]
+  else
+    config.fixture_path = File.expand_path('fixtures', __dir__)
+  end
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!

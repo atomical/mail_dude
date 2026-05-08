@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'mail_dude'
-  spec.version = '0.1.0'
+  spec.version = '0.1.1'
   spec.authors = ['MailDude contributors']
   spec.email = ['mail_dude@example.com']
   spec.summary = 'A Rails Action Mailer capture engine for development and QA.'
@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'rails', '>= 7.1', '< 8.0'
+  spec.add_dependency 'rails', '>= 7.0.3.1', '< 8.0'
 
   spec.add_development_dependency 'capybara', '~> 3.40'
   spec.add_development_dependency 'rspec-rails', '~> 7.1'
@@ -26,5 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop-rake', '~> 0.7'
   spec.add_development_dependency 'rubocop-rspec', '~> 3.5'
   spec.add_development_dependency 'simplecov', '~> 0.22'
-  spec.add_development_dependency 'sqlite3', '~> 2.6'
+  spec.add_development_dependency 'sqlite3', '>= 1.4', '< 3.0'
 end

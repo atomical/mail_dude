@@ -6,6 +6,10 @@ MailDude is a mountable Rails engine and Ruby gem that captures Action Mailer de
 
 Local and QA applications often need realistic email delivery flows without risking real SMTP delivery to customers. MailDude captures the final `Mail::Message` through a delivery method, which prevents SMTP, sendmail, or other external delivery agents from being used.
 
+## Requirements
+
+MailDude supports Ruby 3.2+ and Rails >= 7.0.3.1, < 8.0. CI covers Rails 7.0.3.1, 7.1, and 7.2.
+
 ## Installation
 
 ```ruby

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateMailDudeStoredEmails < ActiveRecord::Migration[7.1]
+class CreateMailDudeStoredEmails < ActiveRecord::Migration[7.0]
   def change
     create_table :mail_dude_stored_emails do |t|
       t.string :uid, null: false

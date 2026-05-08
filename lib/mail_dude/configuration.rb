@@ -80,7 +80,7 @@ module MailDude
 
     def validate_storage_path!
       return unless storage == :file
-      return if storage_path.present?
+      return if storage_path.to_s.present?
 
       raise InvalidConfigurationError, 'storage_path must be present when storage is :file'
     end

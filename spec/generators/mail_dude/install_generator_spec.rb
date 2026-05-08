@@ -1,11 +1,21 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'rails/generators/testing/behavior'
+begin
+  require 'rails/generators/testing/behavior'
+rescue LoadError
+  require 'rails/generators/testing/behaviour'
+end
 require 'generators/mail_dude/install_generator'
 
 RSpec.describe MailDude::Generators::InstallGenerator, type: :generator do
-  include Rails::Generators::Testing::Behavior
+  include(
+    if defined?(Rails::Generators::Testing::Behavior)
+      Rails::Generators::Testing::Behavior
+    else
+      Rails::Generators::Testing::Behaviour
+    end
+  )
   include FileUtils
 
   tests described_class

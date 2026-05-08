@@ -25,7 +25,7 @@ module MailDude
       render plain: presenter_for(params[:id]).text_body.presence || 'This message does not include a plain text body.'
     end
 
-    def headers
+    def message_headers
       render plain: presenter_for(params[:id]).raw_headers.presence || 'This message does not include headers.'
     end
 

@@ -7,7 +7,7 @@ MailDude::Engine.routes.draw do
     member do
       get :html
       get :text
-      get :headers
+      get 'headers', action: :message_headers
       get :raw
       get 'attachments/:attachment_id', to: 'attachments#show', as: :attachment
     end

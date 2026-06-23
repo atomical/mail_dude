@@ -41,7 +41,7 @@ module MailDude
         sender: presenter.sender_summary,
         recipients: presenter.recipient_summary,
         captured_at: presenter.captured_at_label,
-        attachments_count: presenter.attachments.length,
+        attachments_count: presenter.attachment_count,
         attachment_count_label: presenter.attachment_count_label,
         mailer_label: presenter.mailer_label
       }

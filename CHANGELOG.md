@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3
+
+- Fix CID image rendering for Content-ID attachments without inline disposition.
+- Strip attachment payloads from stored raw source when attachment capture is disabled.
+
 ## 0.1.2
 
 - Add official Ruby 3.1 support.

@@ -82,6 +82,47 @@ RSpec.describe 'MailDude messages', type: :request do
     expect(MailDude.store.list.total_count).to eq(0)
   end
 
+  it 'renders inline images through working attachment URLs instead of cid links' do
+    record = MailDude.store.write(cid_attachment_image_mail)
+
+    get "/mail_dude/messages/#{record.id}/html"
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('cid:logo@example.com')
+
+    image_src = Nokogiri::HTML.fragment(response.body).at_css('img')&.[]('src')
+    expect(image_src).to eq("/mail_dude/messages/#{record.id}/attachments/a0?inline=1")
+
+    get image_src
+
+    expect(response).to have_http_status(:ok)
+    expect(response.media_type).to eq('image/png')
+    expect(response.headers['Content-Disposition']).to include('inline')
+    expect(response.body).to include('PNGDATA')
+  end
+
+  it 'reports disabled attachment capture without exposing attachment bytes' do
+    MailDude.configure do |config|
+      config.storage = :memory
+      config.capture_attachments = false
+    end
+    record = MailDude.store.write(attachment_mail)
+
+    get "/mail_dude/messages/#{record.id}"
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Attachments were present but capture is disabled.')
+    expect(response.body).to include('1 attachment')
+    expect(response.body).not_to include('report.pdf')
+
+    get "/mail_dude/messages/#{record.id}/raw"
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Hello from MailDude')
+    expect(response.body).not_to include('PDFDATA')
+    expect(response.body).not_to include('UERGREFUQQ==')
+  end
+
   it 'returns safe placeholders and 404s without exposing paths' do
     record = MailDude.store.write(plain_mail)
 

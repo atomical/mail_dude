@@ -80,12 +80,12 @@ module MailDude
       raw_source.split(/\r?\n\r?\n/, 2).first.to_s
     end
 
-    def has_attachments?
-      attachments.any?
-    end
+    def has_attachments? = metadata_value('has_attachments') == true || attachments.any?
+
+    def attachment_count = metadata_value('attachments_count').presence&.to_i || attachments.length
 
     def attachment_count_label
-      count = attachments.length
+      count = attachment_count
       "#{count} #{'attachment'.pluralize(count)}"
     end
 

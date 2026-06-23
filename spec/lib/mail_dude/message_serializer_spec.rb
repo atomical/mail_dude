@@ -65,6 +65,20 @@ RSpec.describe MailDude::MessageSerializer do
     )
   end
 
+  it 'reports attachment presence without metadata when attachment capture is disabled' do
+    MailDude.configure do |config|
+      config.capture_attachments = false
+    end
+
+    metadata = described_class.new(attachment_mail, id: 'mid', captured_at: captured_at).metadata
+
+    expect(metadata).to include(
+      'has_attachments' => true,
+      'attachments_count' => 1,
+      'attachments' => []
+    )
+  end
+
   it 'handles missing and unusual values without crashing' do
     mail = Mail.new
     mail[:to] = 'not an address, still useful'

@@ -91,16 +91,26 @@ module MailDudeSpecHelpers
   end
 
   def inline_image_mail
+    cid_image_mail(subject: 'Inline', html: '<img src="cid:logo@example.com"><a href="https://example.com">Go</a>',
+                   inline: true)
+  end
+
+  def cid_attachment_image_mail
+    cid_image_mail(subject: 'CID Attachment', html: '<img src="cid:logo@example.com">', inline: false)
+  end
+
+  def cid_image_mail(subject:, html:, inline:)
     mail = Mail.new do
       from 'from@example.com'
       to 'to@example.com'
-      subject 'Inline'
+      subject subject
       html_part do
         content_type 'text/html; charset=UTF-8'
-        body '<img src="cid:logo@example.com"><a href="https://example.com">Go</a>'
+        body html
       end
     end
-    mail.attachments.inline['logo.png'] = 'PNGDATA'
+    attachments = inline ? mail.attachments.inline : mail.attachments
+    attachments['logo.png'] = 'PNGDATA'
     mail.attachments['logo.png'].content_id = '<logo@example.com>'
     mail.attachments['logo.png'].content_type = 'image/png'
     mail

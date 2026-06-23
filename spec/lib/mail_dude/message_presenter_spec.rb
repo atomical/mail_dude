@@ -75,6 +75,22 @@ RSpec.describe MailDude::MessagePresenter do
     expect(presenter.mail).to be_a(Mail::Message)
   end
 
+  it 'reports attachment presence from metadata when attachment details are omitted' do
+    record = MailDude::MessageRecord.new(
+      id: 'id',
+      metadata: {
+        'has_attachments' => true,
+        'attachments_count' => 2,
+        'attachments' => []
+      }
+    )
+    presenter = described_class.new(record)
+
+    expect(presenter).to be_has_attachments
+    expect(presenter.attachment_count).to eq(2)
+    expect(presenter.attachment_count_label).to eq('2 attachments')
+  end
+
   it 'covers mailer-only labels, kilobyte sizes, blank raw source, and html previews' do
     record = MailDude::MessageRecord.new(
       id: 'id',

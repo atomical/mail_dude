@@ -35,8 +35,8 @@ module MailDude
         'mailer_action' => internal_header(INTERNAL_ACTION_HEADER),
         'has_html' => part_present?('text/html'),
         'has_text' => part_present?('text/plain'),
-        'has_attachments' => attachments.any?,
-        'attachments_count' => attachments.length,
+        'has_attachments' => attachment_locator.attachments_present?,
+        'attachments_count' => attachment_locator.attachments_count,
         'attachments' => attachments,
         'size_bytes' => raw_source.bytesize
       }
@@ -55,7 +55,11 @@ module MailDude
     end
 
     def attachments
-      @attachments ||= AttachmentLocator.new(mail).attachments.map(&:metadata)
+      @attachments ||= attachment_locator.attachments.map(&:metadata)
+    end
+
+    def attachment_locator
+      @attachment_locator ||= AttachmentLocator.new(mail)
     end
 
     def content_type

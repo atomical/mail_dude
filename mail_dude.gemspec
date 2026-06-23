@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'mail_dude'
-  spec.version = '0.1.1'
+  spec.version = '0.1.2'
   spec.authors = ['MailDude contributors']
   spec.email = ['mail_dude@example.com']
   spec.summary = 'A Rails Action Mailer capture engine for development and QA.'

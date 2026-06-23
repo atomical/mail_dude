@@ -67,4 +67,23 @@ RSpec.shared_examples 'a MailDude store' do
 
     expect(MailDude::AttachmentLocator.new(store.find(record.id)).find('a0').data).to include('PDFDATA')
   end
+
+  it 'omits attachment bytes when attachment capture is disabled' do
+    MailDude.configure do |config|
+      config.capture_attachments = false
+    end
+
+    record = store.write(attachment_mail)
+    found = store.find(record.id)
+
+    expect(found.metadata).to include(
+      'has_attachments' => true,
+      'attachments_count' => 1,
+      'attachments' => []
+    )
+    expect(found.raw_source).to include('Hello from MailDude')
+    expect(found.raw_source).not_to include('PDFDATA')
+    expect(found.raw_source).not_to include('UERGREFUQQ==')
+    expect { MailDude::AttachmentLocator.new(found).find('a0') }.to raise_error(MailDude::AttachmentNotFoundError)
+  end
 end

@@ -14,7 +14,18 @@ RSpec.describe MailDude::AttachmentLocator do
     expect(attachment.data).to include('PNGDATA')
     expect(attachment).to be_inline
     expect(locator.find_inline_by_cid('<logo@example.com>').id).to eq('a0')
+    expect(locator.find_inline_by_cid('cid:')).to be_nil
     expect(locator.find_inline_by_cid('cid:missing')).to be_nil
+  end
+
+  it 'treats content-id attachments as inline renderable even without inline disposition' do
+    record = MailDude.store.write(cid_attachment_image_mail)
+    locator = described_class.new(record)
+    attachment = locator.find('a0')
+
+    expect(attachment.metadata['disposition']).to eq('attachment')
+    expect(attachment).to be_inline
+    expect(locator.find_inline_by_cid('cid:logo@example.com')).to eq(attachment)
   end
 
   it 'sanitizes filenames and applies fallbacks' do

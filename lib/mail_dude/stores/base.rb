@@ -35,9 +35,15 @@ module MailDude
       private
 
       def build_record(mail, id: generate_id, captured_at: Time.now.utc)
-        raw_source = mail.to_s
+        raw_source = raw_source_for(mail)
         metadata = MessageSerializer.new(mail, id: id, captured_at: captured_at, raw_source: raw_source).metadata
         MessageRecord.new(id: id, metadata: metadata, raw_source: raw_source)
+      end
+
+      def raw_source_for(mail)
+        return mail.to_s if MailDude.configuration.capture_attachments
+
+        AttachmentScrubber.new(mail).raw_source
       end
 
       def generate_id

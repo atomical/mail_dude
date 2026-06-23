@@ -8,7 +8,7 @@ Local and QA applications often need realistic email delivery flows without risk
 
 ## Requirements
 
-MailDude supports Ruby 3.2+ and Rails >= 7.0.3.1, < 8.0. CI covers Rails 7.0.3.1, 7.1, and 7.2.
+MailDude supports Ruby 3.1+ and Rails >= 7.0.3.1, < 8.0. CI covers Ruby 3.1 and 3.2 across Rails 7.0.3.1, 7.1, and 7.2.
 
 ## Installation
 

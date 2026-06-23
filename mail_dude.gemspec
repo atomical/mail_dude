@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.description = 'MailDude captures Action Mailer deliveries and displays them in a mountable Rails engine.'
   spec.homepage = 'https://example.com/mail_dude'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 3.2'
+  spec.required_ruby_version = '>= 3.1'
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.files = Dir.chdir(__dir__) do

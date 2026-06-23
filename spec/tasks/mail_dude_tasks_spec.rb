@@ -18,10 +18,10 @@ RSpec.describe 'mail_dude rake tasks', order: :defined do
       /Storage: memory\nMessages: 1\nPath: .*mail_dude\nTable: mail_dude_stored_emails/
     )
 
-    expect(capture_stdout { invoke('mail_dude:prune') }).to match(/Pruned 0 MailDude messages/)
+    expect(capture_stdout { invoke('mail_dude:prune') }).to include('Pruned 0 MailDude messages')
 
-    expect(capture_stdout { invoke('mail_dude:clear') }).to match(/Cleared 1 MailDude messages/)
-    expect(capture_stdout { invoke('mail_dude:clear') }).to match(/Cleared 0 MailDude messages/)
+    expect(capture_stdout { invoke('mail_dude:clear') }).to include('Cleared 1 MailDude messages')
+    expect(capture_stdout { invoke('mail_dude:clear') }).to include('Cleared 0 MailDude messages')
   end
 
   it 'prints adapter-specific stats for file and database storage' do
@@ -34,7 +34,7 @@ RSpec.describe 'mail_dude rake tasks', order: :defined do
 
     create_mail_dude_table!
     MailDude.configure { |config| config.storage = :database }
-    expect(capture_stdout { invoke('mail_dude:stats') }).to match(/Table: mail_dude_stored_emails/)
+    expect(capture_stdout { invoke('mail_dude:stats') }).to include('Table: mail_dude_stored_emails')
   ensure
     FileUtils.rm_rf(path) if path
   end

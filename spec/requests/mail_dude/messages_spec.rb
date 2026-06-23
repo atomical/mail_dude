@@ -39,7 +39,7 @@ RSpec.describe 'MailDude messages', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('MailDude', 'Inline', 'From', 'Message-ID')
-    expect(response.body).to include('sandbox=""')
+    expect(response.body).to include('sandbox="allow-same-origin"')
     expect(response.body).not_to include('allow-scripts')
     expect(response.body).to include('Next').or include('Previous')
     expect(response.body).to include('data-mail-dude-message-id')

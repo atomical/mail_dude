@@ -65,6 +65,33 @@ RSpec.describe MailDude::MessageSerializer do
     )
   end
 
+  it 'serializes Action Mailer inline attachments from the captured raw source' do
+    mailer_class = Class.new(ApplicationMailer) do
+      default from: 'from@example.com'
+
+      def barcode_email
+        attachments.inline['barcode.png'] = 'PNGDATA'
+        mail(to: 'to@example.com', subject: 'Inline Barcode') do |format|
+          format.html do
+            render html: ActionController::Base.helpers.tag.img(src: attachments['barcode.png'].url)
+          end
+        end
+      end
+    end
+    stub_const('InlineImageMailer', mailer_class)
+    mail = InlineImageMailer.barcode_email
+
+    metadata = described_class.new(mail, id: 'mid', captured_at: captured_at, raw_source: mail.to_s).metadata
+
+    expect(metadata['has_attachments']).to be(true)
+    expect(metadata['attachments_count']).to eq(1)
+    expect(metadata['attachments'].first).to include(
+      'filename' => 'barcode.png',
+      'content_type' => 'image/png',
+      'inline' => true
+    )
+  end
+
   it 'reports attachment presence without metadata when attachment capture is disabled' do
     MailDude.configure do |config|
       config.capture_attachments = false

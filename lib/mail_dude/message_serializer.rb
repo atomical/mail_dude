@@ -54,12 +54,16 @@ module MailDude
       fallback.present? ? [fallback] : []
     end
 
-    def attachments
-      @attachments ||= attachment_locator.attachments.map(&:metadata)
-    end
+    def attachments = @attachments ||= attachment_locator.attachments.map(&:metadata)
 
     def attachment_locator
-      @attachment_locator ||= AttachmentLocator.new(mail)
+      @attachment_locator ||= AttachmentLocator.new(attachment_source)
+    end
+
+    def attachment_source
+      return mail unless MailDude.configuration.capture_attachments && raw_source.present?
+
+      MessageRecord.new(id: id, metadata: {}, raw_source: raw_source)
     end
 
     def content_type

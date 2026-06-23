@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4
+
+- Allow sandboxed previews to load same-origin inline attachments.
+- Serialize Action Mailer inline attachments from captured raw source.
+
 ## 0.1.3
 
 - Fix CID image rendering for Content-ID attachments without inline disposition.

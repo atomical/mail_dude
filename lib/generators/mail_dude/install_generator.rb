@@ -27,8 +27,10 @@ module MailDude
 
           Mount MailDude behind host app authentication and authorization:
 
-            authenticate :user, lambda { |u| Ability.new(u).can?(:manage, MailDude::Dashboard) } do
-              mount MailDude::Engine, at: "/mail_dude"
+            if defined?(MailDude::Dashboard) && defined?(MailDude::Engine)
+              authenticate :user, lambda { |u| Ability.new(u).can?(:manage, MailDude::Dashboard) } do
+                mount MailDude::Engine, at: "/mail_dude"
+              end
             end
 
           Configure Action Mailer in development or QA:
@@ -36,6 +38,7 @@ module MailDude
             config.action_mailer.delivery_method = :mail_dude
             config.action_mailer.perform_deliveries = true
 
+          Keep MailDude constant references guarded if this gem is not bundled in every environment.
           MailDude does not authenticate users itself. Do not expose /mail_dude publicly.
         TEXT
         puts 'Run bin/rails db:migrate before using database storage.' if options[:database]

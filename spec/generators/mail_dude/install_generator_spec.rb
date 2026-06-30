@@ -29,11 +29,14 @@ RSpec.describe MailDude::Generators::InstallGenerator, type: :generator do
     initializer = file('config/initializers/mail_dude.rb')
 
     expect(initializer).to exist
+    expect(initializer.read).to include('if defined?(MailDude)')
     expect(initializer.read).to include('config.storage = :file')
     expect(initializer.read).to include('config.live_updates = false')
     expect(initializer.read).to include('config.live_update_authorizer = ->(_connection) { false }')
+    expect(output).to include('if defined?(MailDude::Dashboard) && defined?(MailDude::Engine)')
     expect(output).to include('mount MailDude::Engine, at: "/mail_dude"')
     expect(output).to include('config.action_mailer.delivery_method = :mail_dude')
+    expect(output).to include('Keep MailDude constant references guarded')
     expect(output).to include('Do not expose /mail_dude publicly')
   end
 

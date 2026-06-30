@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
-MailDude.configure do |config|
-  config.enabled_environments = %w[development qa test]
-  config.storage = <%= @storage %>
-  config.storage_path = Rails.root.join("tmp", "mail_dude")
-  config.max_messages = 1_000
-  config.retention_period = 7.days
-  config.max_message_size = 25.megabytes
-  config.allow_production = false
-  config.capture_attachments = true
-  config.capture_mailer_metadata_headers = true
-  config.default_per_page = 50
-  config.live_updates = false
-  config.live_update_stream_name = "mail_dude:#{Rails.env}:messages"
-  config.live_update_authorizer = ->(_connection) { false }
+if defined?(MailDude)
+  MailDude.configure do |config|
+    config.enabled_environments = %w[development qa test]
+    config.storage = <%= @storage %>
+    config.storage_path = Rails.root.join("tmp", "mail_dude")
+    config.max_messages = 1_000
+    config.retention_period = 7.days
+    config.max_message_size = 25.megabytes
+    config.allow_production = false
+    config.capture_attachments = true
+    config.capture_mailer_metadata_headers = true
+    config.default_per_page = 50
+    config.live_updates = false
+    config.live_update_stream_name = "mail_dude:#{Rails.env}:messages"
+    config.live_update_authorizer = ->(_connection) { false }
+  end
 end

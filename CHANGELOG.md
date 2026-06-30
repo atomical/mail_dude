@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Document and generate guards for host apps that exclude MailDude from some bundle environments.
+
 ## 0.1.4
 
 - Allow sandboxed previews to load same-origin inline attachments.

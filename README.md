@@ -18,6 +18,10 @@ group :development, :qa do
 end
 ```
 
+If MailDude is not bundled in every environment, guard host-app references to
+`MailDude` constants. Rails still loads initializers, routes, and authorization
+classes in production even when the gem is excluded from that bundle group.
+
 Run the installer:
 
 ```bash
@@ -38,11 +42,13 @@ config.action_mailer.delivery_method = :mail_dude
 config.action_mailer.perform_deliveries = true
 ```
 
-MailDude registers this delivery method when Action Mailer loads:
+Configure this only in environments where the gem is bundled and loaded.
+MailDude registers this delivery method when Action Mailer loads. If your host
+app also registers it manually, guard the constant reference:
 
 ```ruby
 ActiveSupport.on_load(:action_mailer) do
-  add_delivery_method :mail_dude, MailDude::DeliveryMethod
+  add_delivery_method :mail_dude, MailDude::DeliveryMethod if defined?(MailDude::DeliveryMethod)
 end
 ```
 
@@ -51,8 +57,10 @@ end
 MailDude does not authenticate or authorize users. Mount it behind your host application’s existing controls.
 
 ```ruby
-authenticate :user, lambda { |u| Ability.new(u).can?(:manage, MailDude::Dashboard) } do
-  mount MailDude::Engine, at: "/mail_dude"
+if defined?(MailDude::Dashboard) && defined?(MailDude::Engine)
+  authenticate :user, lambda { |u| Ability.new(u).can?(:manage, MailDude::Dashboard) } do
+    mount MailDude::Engine, at: "/mail_dude"
+  end
 end
 ```
 
@@ -65,7 +73,7 @@ class Ability
   def initialize(user)
     return unless user
 
-    can :manage, MailDude::Dashboard if user.admin?
+    can :manage, MailDude::Dashboard if defined?(MailDude::Dashboard) && user.admin?
   end
 end
 ```
@@ -75,20 +83,22 @@ MailDude does not depend on Devise, CanCanCan, Sidekiq, Redis, or a host app use
 ## Configuration
 
 ```ruby
-MailDude.configure do |config|
-  config.enabled_environments = %w[development qa test]
-  config.storage = :file
-  config.storage_path = Rails.root.join("tmp", "mail_dude")
-  config.max_messages = 1_000
-  config.retention_period = 7.days
-  config.max_message_size = 25.megabytes
-  config.allow_production = false
-  config.capture_attachments = true
-  config.capture_mailer_metadata_headers = true
-  config.default_per_page = 50
-  config.live_updates = false
-  config.live_update_stream_name = "mail_dude:#{Rails.env}:messages"
-  config.live_update_authorizer = ->(_connection) { false }
+if defined?(MailDude)
+  MailDude.configure do |config|
+    config.enabled_environments = %w[development qa test]
+    config.storage = :file
+    config.storage_path = Rails.root.join("tmp", "mail_dude")
+    config.max_messages = 1_000
+    config.retention_period = 7.days
+    config.max_message_size = 25.megabytes
+    config.allow_production = false
+    config.capture_attachments = true
+    config.capture_mailer_metadata_headers = true
+    config.default_per_page = 50
+    config.live_updates = false
+    config.live_update_stream_name = "mail_dude:#{Rails.env}:messages"
+    config.live_update_authorizer = ->(_connection) { false }
+  end
 end
 ```
 
@@ -144,13 +154,15 @@ Mounting the engine exposes a mailbox UI with a message list, selected message m
 MailDude can optionally use Action Cable to show a “New message captured” banner without requiring a page reload. This is disabled by default.
 
 ```ruby
-MailDude.configure do |config|
-  config.live_updates = true
-  config.live_update_stream_name = "mail_dude:#{Rails.env}:messages"
-  config.live_update_authorizer = lambda { |connection|
-    user = connection.respond_to?(:current_user) ? connection.current_user : nil
-    user && Ability.new(user).can?(:manage, MailDude::Dashboard)
-  }
+if defined?(MailDude)
+  MailDude.configure do |config|
+    config.live_updates = true
+    config.live_update_stream_name = "mail_dude:#{Rails.env}:messages"
+    config.live_update_authorizer = lambda { |connection|
+      user = connection.respond_to?(:current_user) ? connection.current_user : nil
+      user && Ability.new(user).can?(:manage, MailDude::Dashboard)
+    }
+  end
 end
 ```
 
@@ -212,6 +224,11 @@ If Action Cable live updates are enabled, protect subscriptions with `live_updat
 ## Production Warning
 
 Production is disabled by default. If `:mail_dude` is configured in a disabled environment, delivery raises `MailDude::DisabledEnvironmentError` and does not store or send the email.
+
+`allow_production` only controls delivery behavior when the gem is loaded. If
+production excludes MailDude from the bundle, guard initializers, routes,
+Action Mailer registrations, and authorization rules with `defined?(MailDude...)`
+checks so production boot does not raise `NameError: uninitialized constant MailDude`.
 
 An escape hatch exists:
 
